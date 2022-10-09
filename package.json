@@ -1,0 +1,23 @@
+{
+  "name": "newshub-poetry",
+  "version": "1.0.0",
+  "description": "Generate a poem from Newshub pull quotes. Idea by @DailyIndgnation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "bin":{
+    "newshub-poem": "./index.js"
+  },
+  "keywords": [],
+  "author": "Ben Torkington <ben@torkington.com>",
+  "license": "ISC",
+  "dependencies": {
+    "fs-extra": "^10.1.0",
+    "html-entities": "^2.3.3",
+    "node-fetch": "^2.6.7",
+    "node-html-parser": "^6.1.1",
+    "node-html-to-image": "^3.2.4"
+  }
+}
