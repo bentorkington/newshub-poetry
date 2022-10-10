@@ -5,6 +5,8 @@ const fs = require('fs');
 // better performance if we disable this unneeded feature
 app.disableHardwareAcceleration();
 
+const isMac = process.platform === 'darwin';
+
 let offscreen;
 
 const fetchAndRender = () => {
@@ -12,12 +14,15 @@ const fetchAndRender = () => {
     enableLargerThanScreen: true,
     width: 2000,
     height: 2000,
-    show: false,
+    show: isMac,
     webPreferences: {
       offscreen: true,
       preload: path.join(__dirname, 'preload.js'),
     }
   });
+  if (isMac) {
+    offscreen.hide();
+  }
   ipcMain.handle('poem-rendered', (ev) => {
     console.log('rendered');
     offscreen.webContents.capturePage()
