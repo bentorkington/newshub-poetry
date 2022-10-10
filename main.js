@@ -12,12 +12,12 @@ const fetchAndRender = () => {
     enableLargerThanScreen: true,
     width: 2000,
     height: 2000,
+    show: false,
     webPreferences: {
       offscreen: true,
       preload: path.join(__dirname, 'preload.js'),
     }
   });
-  offscreen.hide();
   ipcMain.handle('poem-rendered', (ev) => {
     console.log('rendered');
     offscreen.webContents.capturePage()
