@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const fetch = require('node-fetch');
 const parser = require('node-html-parser');
-const getQuotes = require('./match-pull-quote');
+const NewsTile = require('./newstile');
 
 // better performance if we disable this unneeded feature
 app.disableHardwareAcceleration();
@@ -11,6 +11,12 @@ app.disableHardwareAcceleration();
 const isMac = process.platform === 'darwin';
 
 let offscreen;
+
+Array.prototype.asyncFilter = async function(f){
+  var array = this;
+  var booleans = await Promise.all(array.map(f));
+  return array.filter((x,i)=>booleans[i])
+}
 
 const fetchAndRender = () => {
   offscreen = new BrowserWindow({
@@ -49,17 +55,27 @@ const fetchAndRender = () => {
     .then(() => fetch('https://www.newshub.co.nz/home.html'))
     .then((res) => res.text())
     .then((html) => {
-      const doc = parser.parse(html);
-      Array.from(doc.querySelectorAll('section.ContentBelt')).forEach((e) => e.remove());
+      const doc = parser.parse(html);    
+      const uniqueStories = NewsTile
+        .uniqueByUrl(Array.from(doc.querySelectorAll('div.c-NewsTile')).map(el => new NewsTile(el)))
+        .filter(s => s.headlineQuotes);
 
-      const headlines = Array.from(doc.querySelectorAll('div.c-NewsTile h3.c-NewsTile-title'))
-        .flatMap((hl) => getQuotes(hl.text))
-        .filter((match) => match);
+      const now = Date.now();
+      Promise.all(uniqueStories.map((story) => {
+        return story.getArticlePublicationDate().then((date) => {
+          return { story, age: (now - date) / (60 * 60 * 1000) };
+        })
+      })).then((agedStories) => {
+        const freshStories = agedStories.filter(s => s.age <= 24).map(as => as.story);
+        const headlines = freshStories
+          .flatMap((hl) => hl.headlineQuotes)
+          .filter((match) => match);
 
-      const date = new Date();
-      const dayName = date.toLocaleDateString(undefined, { weekday: 'long' });
-      const fullDate = date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
-      offscreen.webContents.send('send-settings', { headlines, dayName, fullDate });
+        const date = new Date();
+        const dayName = date.toLocaleDateString(undefined, { weekday: 'long' });
+        const fullDate = date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+        offscreen.webContents.send('send-settings', { headlines, dayName, fullDate });
+      });
     });
 }
 
