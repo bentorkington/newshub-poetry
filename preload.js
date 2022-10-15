@@ -1,10 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
-contextBridge.exposeInMainWorld('versions', {
-  node: () => process.versions.node,
-  chrome: () => process.versions.chrome,
-  electron: () => process.versions.electron,
-  // we can also expose variables, not just functions
-  ping: () => ipcRenderer.invoke('ping'),
+contextBridge.exposeInMainWorld('bridge', {
   poemRendered: (a) => ipcRenderer.invoke('poem-rendered', a),
-})
+  sendSettings: (message) => ipcRenderer.on('send-settings', message),
+});
+

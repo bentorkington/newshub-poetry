@@ -1,5 +1,5 @@
 const test = require('ava');
-const quotes = require('../src/match-pull-quote.js');
+const quotes = require('../match-pull-quote.js');
 
 test('headline with no quote', t => {
   const m = quotes("A sentence with no quote");

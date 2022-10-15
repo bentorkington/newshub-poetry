@@ -13,7 +13,9 @@
   "author": "Ben Torkington <ben@torkington.com>",
   "license": "ISC",
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "node-fetch": "^2.6.7",
+    "node-html-parser": "^6.1.1"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.67",
