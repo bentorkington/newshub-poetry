@@ -1,6 +1,6 @@
 {
   "name": "newshub-poetry",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generate a poem from Newshub pull quotes. Idea by @DailyIndgnation",
   "main": "main.js",
   "scripts": {
