@@ -4,6 +4,7 @@ const fs = require('fs');
 const fetch = require('node-fetch');
 const parser = require('node-html-parser');
 const NewsTile = require('./newstile');
+const StoryCard = require('./nzh-story-card');
 
 // better performance if we disable this unneeded feature
 app.disableHardwareAcceleration();
@@ -52,12 +53,14 @@ const fetchAndRender = () => {
       });
   });
   offscreen.loadFile('poem.html')
-    .then(() => fetch('https://www.newshub.co.nz/home.html'))
+    .then(() => fetch('https://www.nzherald.co.nz/'))
     .then((res) => res.text())
     .then((html) => {
       const doc = parser.parse(html);    
       const uniqueStories = NewsTile
-        .uniqueByUrl(Array.from(doc.querySelectorAll('div.c-NewsTile')).map(el => new NewsTile(el)))
+        .uniqueByUrl(Array.from(doc.querySelectorAll('article.story-card[data-test-ui]:not([data-test-ui="story-card__blank-html"])'))
+        
+        .map(el => new StoryCard(el)))
         .filter(s => s.headlineQuotes);
 
       const now = Date.now();
