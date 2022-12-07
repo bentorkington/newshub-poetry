@@ -37,9 +37,11 @@ const fetchAndRender = () => {
     console.log('rendered');
     offscreen.webContents.capturePage()
       .then((image) => {
+        const now = new Date();
+        const fileDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
         dialog.showSaveDialog({
           title: "Save PNG as…",
-          defaultPath: `newshub-poem-${new Date().toISOString().replace(/T.*/,'')}.png`,
+          defaultPath: `newshub-poem-${fileDate.toISOString().replace(/T.*/,'')}.png`,
           properties: ["createDirectory"],
         }).then((dialogResult) => {
           if (!dialogResult.canceled) {
